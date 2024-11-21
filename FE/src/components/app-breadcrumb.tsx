@@ -1,9 +1,9 @@
 'use client'
+
+import React from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import {
     Breadcrumb,
-    BreadcrumbEllipsis,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
@@ -14,34 +14,34 @@ import {
   
   export function BreadcrumbDemo() {
     const pathname = usePathname();
-    const path = pathname.split('/');
-
-    console.log(path)
-
     const pathSegments = pathname.split('/').filter(Boolean);
 
     const breadcrumbMap: Record<string, string> = {
       projects: 'Projects',
-      'weather-app': 'Weather App',
+      'weather-app': 'Weatherly',
+      'inventory-management': 'InventoryFi',
     };
+
 
     return (
       <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem>
+          <BreadcrumbPage>
               <SidebarTrigger/>
-          </BreadcrumbItem>
+          </BreadcrumbPage>
           <BreadcrumbItem>
               <BreadcrumbLink href="/">Home</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           {pathSegments.map((segment, index) => {
           const href = '/' + pathSegments.slice(0, index + 1).join('/');
-
           return (
-            <li className="breadcrumb-item" key={href}>
-              <Link href={href}>{breadcrumbMap[segment] || segment}</Link>
-            </li>
+            <React.Fragment key={index}>
+              <BreadcrumbItem key={index}>
+              {index < pathSegments.length - 1 ? <BreadcrumbLink href={href}>{breadcrumbMap[segment] || segment}</BreadcrumbLink> : <BreadcrumbPage>{breadcrumbMap[segment] || segment}</BreadcrumbPage>}
+              </BreadcrumbItem>
+              {index < pathSegments.length - 1 && <BreadcrumbSeparator />}
+            </React.Fragment>
           );
         })}
         </BreadcrumbList>
