@@ -1,18 +1,18 @@
 import supabase from "@/db/supabase";
 
-interface Project {
+interface Menus {
   id: number;
   created_at: string;
   title: string;
-  content: string;
-  technology: any;
   url: string;
+  icon: string;
+  role: string;
 }
 
-class ProjectsService {
-  static async getAllProjects(): Promise<Project[]> {
+class MenuService {
+  static async getAllMenu(): Promise<Menus[]> {
     const { data: projects, error } = await supabase
-      .from("projects")
+      .from("menu")
       .select("*");
 
     if (error) {
@@ -23,11 +23,11 @@ class ProjectsService {
     return projects || [];
   }
 
-  static async getProjectsByName(name: string): Promise<Project[]> {
+  static async getMenuByRole(role: string): Promise<Menus[]> {
     const { data: projects, error } = await supabase
-      .from("projects")
+      .from("menu")
       .select("*")
-      .eq("title", name);
+      .eq("role", role);
 
     if (error) {
       console.error("Error fetching project by id:", error);
@@ -38,4 +38,4 @@ class ProjectsService {
   }
 }
 
-export default ProjectsService;
+export default MenuService;

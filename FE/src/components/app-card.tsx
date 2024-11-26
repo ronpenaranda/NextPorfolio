@@ -19,7 +19,7 @@ const CardApp: React.FC<contentProps> = ({ content }) => {
         <CardDescription>{content?.content}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <a href={content.url}>
+        <a href={`/projects/${content.title}`}>
             <Button className="w-full">
               See More
             </Button>

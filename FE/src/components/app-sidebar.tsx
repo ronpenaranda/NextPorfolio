@@ -1,6 +1,8 @@
 'use client'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Calendar, Home, Inbox, Search, Settings, User2, ChevronUp, ChevronDown } from "lucide-react"
+import MenuService from '@/api/services/menu'
 
 import {
   Sidebar,
@@ -21,30 +23,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// Sidebar items
-const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "Projects",
-    url: "/projects",
-    icon: Inbox,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
-]
-
 export function AppSidebar() {
-  // Initialize useRouter hook
   const router = useRouter()
+  const [menus, setMenus] = useState<any[]>([])
 
-  // Handle navigation on click
+  useEffect(() => {
+    const fetchMenu = async () => {
+      const res = await MenuService.getMenuByRole(`guest`)
+      setMenus(res)
+    }
+  
+    fetchMenu()
+  }, [])
+  
+
   const handleNavigation = (url: string) => {
     router.push(url)
   }
@@ -58,15 +50,14 @@ export function AppSidebar() {
           </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+              {menus?.map((item: any) => (
+                <SidebarMenuItem key={item?.title}>
                   <SidebarMenuButton asChild>
                     <button 
                       className="flex items-center"
-                      onClick={() => handleNavigation(item.url)}
+                      onClick={() => handleNavigation(item?.url)}
                     >
-                      <item.icon />
-                      <span>{item.title}</span>
+                      <span>{item?.title}</span>
                     </button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

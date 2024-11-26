@@ -1,24 +1,33 @@
 import React from 'react'
-import { features } from '@/lib/constant'
+import ProjectsService from '@/api/services/projects';
 
-const Page = () => {
+const Page = async () => {
+  const project = await ProjectsService.getProjectsByName(`Kidlat`)
+
   return (
     <div className="min-w-[500px] max-w-full items-center overflow-auto">
       <div className="bg-white">
             <div className="mx-auto grid grid-cols-1 gap-x-8 gap-y-16 px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
               <div>
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">What is InventoryFi ?</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">What is {project[0]?.title} ?</h2>
                 <p className="mt-4 text-gray-500">
-                is a robust web application designed to streamline inventory tracking and management. With features like real-time stock updates, automated notifications, and insightful analytics, it ensures efficient oversight of resources, reduces errors, and enhances decision-making for businesses."
+                is a sleek and user-friendly web application that provides real-time weather updates for any location. Get accurate temperature, humidity, and forecast details, empowering you to plan your day with ease.
                 </p>
 
                 <dl className="mt-16 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:gap-x-8">
-                  {features.map((feature) => (
-                    <div key={feature.name} className="border-t border-gray-200 pt-4">
-                      <dt className="font-medium text-gray-900">{feature.name}</dt>
-                      <dd className="mt-2 text-sm text-gray-500">{feature.description}</dd>
+                {Object.entries(project[0]?.technology).map(([key, value]) => {
+                  const techList = value as string[] ;
+                  return (
+                    <div key={key}>
+                      {techList.map((item, index) => (
+                        <div key={index} className="border-t border-gray-200 pt-4">
+                          <dt className="font-medium text-gray-900">{key}</dt>
+                          <dd className="mt-2 text-sm text-gray-500">{item}</dd>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  );
+                })}
                 </dl>
               </div>
               <div className="grid grid-cols-2 grid-rows-2 gap-4 sm:gap-6 lg:gap-8">
