@@ -1,8 +1,12 @@
 import React from 'react'
 import CardApp from '@/components/app-card';
-import { projects } from '@/api/dummyapi'
+import { getProjects } from '@/api/services/projects';
 
-const Page = () => {
+const Page = async () => {
+
+  const project = await getProjects()
+
+
   return (
     <div className="min-w-[500px] max-w-full overflow-auto items-center justify-center bg-white p-6 py-10">
       <div className='py-4'>
@@ -12,7 +16,7 @@ const Page = () => {
       </p>
       </div>
       <div className='flex flex-wrap gap-4 py-10'>
-        {projects?.map((item, index) => {
+        {project?.map((item, index) => {
           return(
             <div key={index}>
               <CardApp content={item}/>

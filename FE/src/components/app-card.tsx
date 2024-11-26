@@ -15,11 +15,11 @@ const CardApp: React.FC<contentProps> = ({ content }) => {
   return (
     <Card className="w-[280px]">
       <CardHeader>
-        <CardTitle className="pb-3">{content?.name}</CardTitle>
-        <CardDescription>{content?.description}</CardDescription>
+        <CardTitle className="pb-3">{content?.title}</CardTitle>
+        <CardDescription>{content?.content}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <a href={content.link}>
+        <a href={content.url}>
             <Button className="w-full">
               See More
             </Button>
