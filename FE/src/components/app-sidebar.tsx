@@ -29,7 +29,7 @@ export function AppSidebar() {
 
   useEffect(() => {
     const fetchMenu = async () => {
-      const res = await MenuService.getMenuByRole(`guest`)
+      const res = await MenuService.getAllMenu()
       setMenus(res)
     }
   
