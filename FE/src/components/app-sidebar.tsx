@@ -1,8 +1,17 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Calendar, Home, Inbox, Search, Settings, User2, ChevronUp, ChevronDown } from "lucide-react"
-import MenuService from '@/api/services/menu'
+"use client";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Calendar,
+  Home,
+  Inbox,
+  Search,
+  Settings,
+  User2,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
+import MenuService from "@/services/menu";
 
 import {
   Sidebar,
@@ -14,49 +23,48 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 export function AppSidebar() {
-  const router = useRouter()
-  const [menus, setMenus] = useState<any[]>([])
+  const router = useRouter();
+  const [menus, setMenus] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchMenu = async () => {
-      const res = await MenuService.getAllMenu()
-      setMenus(res)
-    }
-  
-    fetchMenu()
-  }, [])
-  
+      const res = await MenuService.getAllMenu();
+      console.log(res);
+      setMenus(res);
+    };
+
+    fetchMenu();
+  }, []);
 
   const handleNavigation = (url: string) => {
-    router.push(url)
-  }
+    router.push(url);
+  };
 
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <div className="flex justify-center p-4">
-            App Name
-          </div>
+          <div className="flex justify-center p-4">App Name</div>
           <SidebarGroupContent>
             <SidebarMenu>
               {menus?.map((item: any) => (
                 <SidebarMenuItem key={item?.title}>
                   <SidebarMenuButton asChild>
-                    <button 
-                      className="flex items-center"
+                    <button
+                      className="flex gap-4"
                       onClick={() => handleNavigation(item?.url)}
                     >
+                      <span className={`${item?.icon}`}></span>
                       <span>{item?.title}</span>
                     </button>
                   </SidebarMenuButton>
@@ -81,7 +89,11 @@ export function AppSidebar() {
                 className="w-[--radix-popper-anchor-width]"
               >
                 <DropdownMenuItem>
-                  <span>Sign out</span>
+                  <span className="w-full text-center">
+                    <button onClick={() => handleNavigation("/login")}>
+                      Sign out
+                    </button>
+                  </span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -89,5 +101,5 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

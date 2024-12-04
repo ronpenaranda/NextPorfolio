@@ -2,7 +2,7 @@ import supabase from "@/db/supabase";
 
 interface Project {
   id: number;
-  created_at: string;
+  created_at: any;
   title: string;
   content: string;
   technology: any;
@@ -30,7 +30,7 @@ class ProjectsService {
       .eq("title", name);
 
     if (error) {
-      console.error("Error fetching project by id:", error);
+      console.error("Error fetching project by name:", error);
       throw error;
     }
 
