@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image';
 import avatar from "../../assets/images/avatar.png"
+import CardApp from '@/components/app-card';
 
 const Dashboard = () => {
   return (

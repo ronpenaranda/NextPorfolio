@@ -2,7 +2,7 @@ import React from "react";
 import ProjectsService from "@/services/projects";
 
 const Page = async () => {
-  const project = await ProjectsService.getProjectsByName(`Kidlat`);
+  const project = await ProjectsService.getProjectsByName(`MES`);
 
   return (
     <div className="min-w-[500px] max-w-full items-center overflow-auto">

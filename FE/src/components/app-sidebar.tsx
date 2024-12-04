@@ -39,7 +39,6 @@ export function AppSidebar() {
   useEffect(() => {
     const fetchMenu = async () => {
       const res = await MenuService.getAllMenu();
-      console.log(res);
       setMenus(res);
     };
 
@@ -80,7 +79,7 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 /> Guest
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>

@@ -20,6 +20,7 @@ import {
       projects: 'Projects',
       'weather-app': 'Weatherly',
       'inventory-management': 'InventoryFi',
+      'settings': 'Settings',
     };
 
 
