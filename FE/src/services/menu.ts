@@ -7,6 +7,9 @@ interface Menus {
   url: string;
   icon: string;
   role: string;
+  about: any;
+  experience: any;
+  personal: any;
 }
 
 class MenuService {
@@ -35,6 +38,19 @@ class MenuService {
     }
 
     return projects || [];
+  }
+
+  static async getPersonalInfo() {
+    const { data: portfolio, error } = await supabase
+      .from("portfolio")
+      .select("*");
+
+    if (error) {
+      console.error("Error fetching", error);
+      throw error;
+    }
+
+    return portfolio || [];
   }
 }
 
