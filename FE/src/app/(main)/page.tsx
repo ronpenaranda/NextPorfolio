@@ -11,6 +11,7 @@ const Dashboard = async () => {
   const data = personalinfo[0]
 
   return (
+    <div>
     <div className="bg-white px-6 md:px-16">
       <div className="flex flex-col md:flex-row items-center justify-center py-16 md:py-28 gap-8">
         <div className="flex justify-center px-4 md:px-12">
@@ -103,6 +104,7 @@ const Dashboard = async () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

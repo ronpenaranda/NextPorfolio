@@ -6,9 +6,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="p-4 w-screen">
-        <BreadcrumbDemo />
-        <div className="p-4">{children}</div>
+      <main className="w-screen">
+        <div className="p-4">
+          <BreadcrumbDemo />
+        </div>
+        <div>{children}</div>
       </main>
     </SidebarProvider>
   );

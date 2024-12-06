@@ -1,5 +1,7 @@
 import React from "react";
+import Image from "next/image";
 import ProjectsService from "@/services/projects";
+import image from '@/assets/kidlat/kidlat.png'
 
 const Page = async () => {
   const project = await ProjectsService.getProjectsByName(`MES`);
@@ -42,10 +44,10 @@ const Page = async () => {
             </button>
           </div>
           <div className="grid grid-cols-2 grid-rows-2 gap-4 sm:gap-6 lg:gap-8">
-            <img
+            <Image
               alt="Walnut card tray with white powder coated steel divider and 3 punchout holes."
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-01.jpg"
-              className="rounded-lg bg-gray-100"
+              src={image}
+              className="rounded-lg bg-gray-100 object-none"
             />
             <img
               alt="Top down view of walnut card tray with embedded magnets and card groove."

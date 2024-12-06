@@ -167,7 +167,7 @@ const ChatComponent: React.FC = () => {
         <input
           type="text"
           placeholder="Type a message..."
-          className="rounded-lg p-6 w-full"
+          className="rounded-lg p-6 w-full focus:outline-none"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
