@@ -10,9 +10,13 @@ interface Message {
   receiver_id: string;
 }
 
-const ChatComponent: React.FC = () => {
-  const [sender_id, setSender_id] = useState<string>("");
+interface chatProps {
+    sender_id: string;
+}
+
+const ChatComponent: React.FC<chatProps> = ({ sender_id }) => {
   const [receiver_id, setReceiver_id] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -88,20 +92,14 @@ const ChatComponent: React.FC = () => {
     }
   };
 
-  const loadOlderMessages = (): void => {
-    const nextOffset = messageOffset + MESSAGES_PER_PAGE;
-    setMessageOffset(nextOffset);
-    fetchMessages(MESSAGES_PER_PAGE, nextOffset);
-  };
-
   useEffect(() => {
-    if (sender_id && receiver_id) {
+    if (status === "onchat" && sender_id && receiver_id) {
       fetchMessages(MESSAGES_PER_PAGE, 0);
     }
-    const unsubscribe = subscribeToMessages();
 
+    const unsubscribe = subscribeToMessages();
     return unsubscribe;
-  }, [sender_id, receiver_id]);
+  }, [sender_id, receiver_id, status]);
 
   useEffect(() => {
     const container = document.querySelector(".messages-list");
@@ -110,44 +108,95 @@ const ChatComponent: React.FC = () => {
     }
   }, [messages]);
 
+  const setStatusToQueue = async (id: string, status: string): Promise<void> => {
+    setStatus(status)
+    const { error } = await supabase
+      .from("temp_user")
+      .update({ status: status }) 
+      .eq("id", id); 
+  
+    if (error) {
+      console.error(`Error updating user with id ${id}:`, error);
+    } else {
+      console.log(`User with id ${id} has been set to inactive.`);
+    }
+  };
+
+  const setActiveFalseById = async (id: string): Promise<void> => {
+    const { error } = await supabase
+      .from("temp_user")
+      .update({ active: false }) 
+      .eq("id", id); 
+  
+    if (error) {
+      console.error(`Error updating user with id ${id}:`, error);
+    } else {
+      console.log(`User with id ${id} has been set to inactive.`);
+    }
+  };
+
+  const getRandomActiveUsers = async (): Promise<void> => {
+    const fetchActiveUsers = async (): Promise<void> => {
+      // Set current user status to "queue"
+      await setStatusToQueue(sender_id, "queue");
+  
+      const { data: activeUsers, error } = await supabase
+        .from("temp_user")
+        .select("*")
+        .eq("active", true)
+        .eq("status", "queue")
+        .neq("id", sender_id);
+  
+      if (error) {
+        console.error("Error fetching active users:", error);
+        return;
+      }
+  
+      if (!activeUsers || activeUsers.length === 0) {
+        console.log("No active users found. Retrying in 3 seconds...");
+        setTimeout(fetchActiveUsers, 3000); // Retry after 3 seconds
+        return;
+      }
+  
+      // Randomly select a user from the active queue
+      const randomIndex = Math.floor(Math.random() * activeUsers.length);
+      const randomUser = activeUsers[randomIndex];
+  
+      // Set the receiver and update statuses
+      setReceiver_id(`${randomUser?.id}`);
+      await setStatusToQueue(`${randomUser?.id}`, "onchat");
+  
+      console.log(`Connected to user with ID: ${randomUser?.id}`);
+    };
+  
+    // Start fetching active users
+    await fetchActiveUsers();
+  };
+  
+
   const getMessageClass = (senderId: string) => {
     return senderId === sender_id
       ? "bg-white text-black self-end"
       : "bg-gray-300 text-black self-start";
   };
 
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      sendMessage("other party disconnected")
+      setActiveFalseById(sender_id)
+      console.log("Browser is being refreshed or tab is closing.");
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   return (
     <div className="chat-container w-full h-full mx-auto p-4">
-      <div className="flex flex-grow gap-4 mb-4">
-            <input
-              type="text"
-              id="senderid"
-              required
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Sender ID"
-              value={sender_id}
-              onChange={(e) => setSender_id(e.target.value)}
-            />
-            <input
-              type="text"
-              id="receiverid"
-              required
-              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Receiver ID"
-              value={receiver_id}
-              onChange={(e) => setReceiver_id(e.target.value)}
-            />
-      </div>
-      {olderMessagesAvailable && (
-        <button
-          className="bg-gray-500 text-white px-4 py-2 rounded mt-4 w-full"
-          onClick={loadOlderMessages}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Load Older Messages"}
-        </button>
-      )}
-
+    {status === "queue" ? <div>Finding someone to chat...</div> : (
       <div className="messages-list space-y-2 overflow-y-auto max-h-[580px] h-screen">
         {messages.map((msg) => (
           <div
@@ -163,7 +212,17 @@ const ChatComponent: React.FC = () => {
           </div>
         ))}
       </div>
+    )}
       <div className="send-message bg-gray-100 mt-4 p-4 rounded-xl">
+        <div className="flex gap-2">
+        <button
+          className="bg-slate-500 text-white rounded-lg w-[250px]"
+          onClick={() => {
+            getRandomActiveUsers()
+          }}
+        >
+          find chat
+        </button>
         <input
           type="text"
           placeholder="Type a message..."
@@ -171,8 +230,9 @@ const ChatComponent: React.FC = () => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
+        </div>
         <button
-          className="bg-slate-500 text-white px-4 py-2 rounded mt-2 w-full"
+          className="bg-slate-500 text-white px-4 py-2 rounded-lg mt-2 w-full h-[50px]"
           onClick={() => {
             sendMessage(newMessage);
             setNewMessage("");
